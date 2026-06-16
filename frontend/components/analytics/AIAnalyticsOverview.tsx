@@ -4,9 +4,9 @@
 import { useAIAnalytics } from "@/hooks/useAIAnalytics";
 
 export default function AIAnalyticsOverview() {
-  const { data, isLoading } = useAIAnalytics();
+  const { data, loading } = useAIAnalytics();
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="rounded-xl border bg-card p-6">
         Loading AI analytics...
