@@ -1,0 +1,149 @@
+/* frontend/app/globals.css */
+@import "tailwindcss";
+
+/* ------------------------------- */
+/* NEXORA DESIGN SYSTEM            */
+/* Inspired by: Linear, Notion,    */
+/* ChatGPT — clean, structured,    */
+/* with intention in every token   */
+/* ------------------------------- */
+
+:root {
+  /* Backgrounds */
+  --background: 0 0% 99%;          /* near-white, not pure white */
+  --surface: 0 0% 97%;             /* subtle page-level surface */
+  --card: 0 0% 100%;               /* cards pop slightly */
+  --card-foreground: 220 15% 14%;
+
+  /* Foregrounds */
+  --foreground: 220 15% 14%;       /* deep ink, not harsh black */
+  --muted-foreground: 220 9% 48%;  /* secondary text */
+
+  /* Primary — Nexora violet */
+  --primary: 252 82% 60%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Interactive states */
+  --secondary: 220 14% 94%;
+  --secondary-foreground: 220 15% 14%;
+  --muted: 220 14% 94%;
+  --accent: 220 14% 92%;           /* hover tint — very subtle */
+  --accent-foreground: 220 15% 14%;
+
+  /* Semantic */
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* Borders — light, Linear-style hairlines */
+  --border: 220 13% 89%;           /* #e1e4ea — barely visible */
+  --border-strong: 220 13% 82%;    /* slightly stronger when needed */
+  --input: 220 13% 89%;
+  --ring: 252 82% 60%;
+
+  /* Radius */
+  --radius: 0.5rem;
+
+  /* Status */
+  --success: 142 71% 45%;
+  --warning: 38 92% 50%;
+  --info: 217 91% 60%;
+}
+
+/* ------------------------------- */
+/* DARK MODE — Linear/Notion dark  */
+/* ------------------------------- */
+
+.dark {
+  /* Backgrounds — layered depth like Linear */
+  --background: 224 15% 10%;       /* #15171e — deep navy-black */
+  --surface: 224 15% 12%;
+  --card: 224 14% 13%;             /* #1b1e27 — card sits on bg */
+  --card-foreground: 220 20% 92%;
+
+  /* Foregrounds */
+  --foreground: 220 20% 92%;       /* off-white, not blinding */
+  --muted-foreground: 220 12% 56%; /* muted text — readable */
+
+  /* Primary stays vibrant */
+  --primary: 252 82% 65%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Interactive states */
+  --secondary: 224 14% 18%;
+  --secondary-foreground: 220 20% 92%;
+  --muted: 224 14% 16%;
+  --accent: 224 14% 18%;           /* hover tint */
+  --accent-foreground: 220 20% 92%;
+
+  /* Semantic */
+  --destructive: 0 65% 55%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* Borders — subtle in dark, not invisible */
+  --border: 224 14% 20%;           /* #252833 — crisp Linear-style */
+  --border-strong: 224 14% 26%;
+  --input: 224 14% 20%;
+  --ring: 252 82% 65%;
+
+  /* Status */
+  --success: 142 61% 42%;
+  --warning: 38 85% 50%;
+  --info: 217 85% 62%;
+}
+
+/* ------------------------------- */
+/* BASE STYLES                     */
+/* ------------------------------- */
+
+*, *::before, *::after {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar — Notion/Linear style */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border-strong));
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
+}
+
+/* Selection */
+::selection {
+  background: hsl(var(--primary) / 0.18);
+  color: hsl(var(--foreground));
+}
+
+/* ------------------------------- */
+/* UTILITY EXTENSIONS              */
+/* ------------------------------- */
+
+/* Semantic color utilities using CSS vars */
+.text-success { color: hsl(var(--success)); }
+.text-warning { color: hsl(var(--warning)); }
+.text-info { color: hsl(var(--info)); }
+.bg-success { background-color: hsl(var(--success)); }
+.bg-warning { background-color: hsl(var(--warning)); }
+.bg-success\/10 { background-color: hsl(var(--success) / 0.1); }
+.bg-warning\/10 { background-color: hsl(var(--warning) / 0.1); }
+
+/* Smooth page transitions */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
