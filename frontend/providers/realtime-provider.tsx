@@ -17,7 +17,7 @@ import {
 } from "react";
 
 import { RealtimeEvent, WorkspacePresence } from "@/types/realtime";
-import { connect, getSocket, disconnect } from "@/lib/socket";
+import { connect, disconnect } from "@/lib/socket";
 
 interface RealtimeContextType {
   connected: boolean;
@@ -116,5 +116,4 @@ export function useRealtime() {
     throw new Error("useRealtime must be used inside RealtimeProvider");
   }
   return context;
-  //trte
 }

@@ -62,6 +62,6 @@ export function disconnect(): void {
   if (_socket) {
     _socket.disconnect();
     _socket = null;
-    //tttytt
+    //yyyy
   }
 }
