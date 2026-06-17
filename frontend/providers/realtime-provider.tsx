@@ -77,47 +77,64 @@ export function RealtimeProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // Distributed Activity Feed
-  useEffect(() => {
-    const pushEvent = (type: string, payload: unknown) => {
-      setEvents((prev) => [
-        {
-          type,
-          payload,
-          createdAt: new Date().toISOString(),
-        },
-        ...prev.slice(0, 49),
-      ]);
-    };
+  
+// Distributed Activity Feed
+useEffect(() => {
+  const pushEvent = (
+    type: string,
+    payload?: Record<string, unknown>,
+  ) => {
+    setEvents((prev) => [
+      {
+        type,
+        payload,
+        createdAt: new Date().toISOString(),
+      },
 
-    socket.on("task:created", (data) => pushEvent("task:created", data));
+      ...prev.slice(0, 49),
+    ]);
+  };
 
-    socket.on("task:updated", (data) => pushEvent("task:updated", data));
+  socket.on("task:created", (data) =>
+    pushEvent("task:created", data),
+  );
 
-    socket.on("task:deleted", (data) => pushEvent("task:deleted", data));
+  socket.on("task:updated", (data) =>
+    pushEvent("task:updated", data),
+  );
 
-    socket.on("workspace:activity", (data) =>
-      pushEvent("workspace:activity", data),
-    );
+  socket.on("task:deleted", (data) =>
+    pushEvent("task:deleted", data),
+  );
 
-    socket.on("ai:activity", (data) => pushEvent("ai:activity", data));
+  socket.on("workspace:activity", (data) =>
+    pushEvent("workspace:activity", data),
+  );
 
-    socket.on("ai:thinking", (data) => pushEvent("ai:thinking", data));
+  socket.on("ai:activity", (data) =>
+    pushEvent("ai:activity", data),
+  );
 
-    socket.on("ai:completed", (data) => pushEvent("ai:completed", data));
+  socket.on("ai:thinking", (data) =>
+    pushEvent("ai:thinking", data),
+  );
 
-    return () => {
-      socket.off("task:created");
-      socket.off("task:updated");
-      socket.off("task:deleted");
+  socket.on("ai:completed", (data) =>
+    pushEvent("ai:completed", data),
+  );
 
-      socket.off("workspace:activity");
+  return () => {
+    socket.off("task:created");
+    socket.off("task:updated");
+    socket.off("task:deleted");
 
-      socket.off("ai:activity");
-      socket.off("ai:thinking");
-      socket.off("ai:completed");
-    };
-  }, []);
+    socket.off("workspace:activity");
+
+    socket.off("ai:activity");
+    socket.off("ai:thinking");
+    socket.off("ai:completed");
+  };
+}, []);
 
   return (
     <RealtimeContext.Provider value={value}>
