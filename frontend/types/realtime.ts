@@ -17,7 +17,7 @@ export interface WorkspacePresence {
 export interface RealtimeEvent<T = unknown> {
   type: string;
 
-  payload?: T;
+  payload?: Record<string, unknown>;
 
   createdAt: string;
 }
