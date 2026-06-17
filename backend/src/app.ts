@@ -24,32 +24,63 @@ import router from "./routes/ai-conversation.routes";
 import aiActivityRoutes from "./routes/ai-activity.routes";
 import analyticsRoutes from "./routes/analytics.routes";
 import settingsRoutes from "./routes/settings.routes";
-// FIX: GET /api/users/me and PATCH /api/users/me were called by the profile
-// page but were never registered in the backend — causing persistent 404s.
 import usersRoutes from "./routes/users.routes";
-// FIX: GET /api/security/sessions, DELETE /api/security/sessions/:id,
-// GET /api/security/login-history — same missing-routes issue.
 import securityRoutes from "./routes/security.routes";
 
 const app: Application = express();
 
+// ---------------------------------------------------------------------------
+// CORS — supports multiple allowed origins from the CLIENT_URL env variable.
+//
+// On Render, set CLIENT_URL to a comma-separated list of every Vercel URL
+// that should be allowed, e.g.:
+//
+//   CLIENT_URL=https://nexora-ai-rho-ashy.vercel.app,https://nexora-n68v0m13z-fizo20s-projects.vercel.app
+//
+// http://localhost:3000 is always permitted in all environments so local dev
+// works without touching .env.
+// ---------------------------------------------------------------------------
+const rawOrigins = process.env.CLIENT_URL ?? "";
+const allowedOrigins: string[] = [
+  "http://localhost:3000",
+  ...rawOrigins
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean),
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: (incomingOrigin, callback) => {
+      // Server-to-server / curl requests have no Origin header — allow them.
+      if (!incomingOrigin) return callback(null, true);
+
+      if (allowedOrigins.includes(incomingOrigin)) {
+        return callback(null, true);
+      }
+
+      console.warn(`[CORS] Rejected origin: ${incomingOrigin}`);
+      callback(
+        new Error(`CORS policy: origin '${incomingOrigin}' is not allowed`),
+      );
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-/**
- * 🚨 Stripe webhook must be mounted BEFORE express.json()
- */
 
+/**
+ * Stripe webhook must be mounted BEFORE express.json() so the raw body
+ * is available for signature verification.
+ */
 app.use("/webhooks", stripeRoutes);
 
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/users", usersRoutes); // GET /me, PATCH /me
-app.use("/api/security", securityRoutes); // sessions + login-history
+app.use("/api/users", usersRoutes);
+app.use("/api/security", securityRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/conversations", router);
@@ -69,15 +100,12 @@ app.use("/api/workspace", workspaceMetricsRoutes);
 app.use("/api/ai/assistant", aiAssistantRoutes);
 app.use("/api/ai", aiRoutes);
 
-// Global error handler (must be last)
+// Global error handler — must remain last
 app.use(globalErrorHandler);
 
-// Health check endpoint
+// Health check
 app.get("/health", (_req, res) => {
-  res.status(200).json({
-    status: "ok",
-    service: "nexora-backend",
-  });
+  res.status(200).json({ status: "ok", service: "nexora-backend" });
 });
 
 export default app;
