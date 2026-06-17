@@ -19,12 +19,10 @@ export const authenticateUser = (
     const token = authHeader.split(" ")[1];
     const payload = verifyAccessToken(token);
 
-    // ✅ Validate identity token
     if (!("userId" in payload)) {
       throw new AppError("Invalid identity token", 401);
     }
 
-    // Attach minimal auth info
     req.auth = {
       userId: payload.userId,
       email: (payload as any).email,
@@ -42,8 +40,6 @@ export const authenticateWorkspace = (
   next: NextFunction,
 ) => {
   try {
-    console.log("AUTH HEADER:", req.headers.authorization);
-
     const authHeader = req.headers.authorization;
 
     if (!authHeader?.startsWith("Bearer ")) {
@@ -53,10 +49,6 @@ export const authenticateWorkspace = (
     const token = authHeader.split(" ")[1];
     const payload = verifyAccessToken(token);
 
-    console.log("AUTH HEADER:", req.headers.authorization);
-    /**
-     * Ensure this is a workspace-scoped token
-     */
     if (
       !("workspaceId" in payload) ||
       !("plan" in payload) ||
@@ -88,18 +80,22 @@ export const requireAuth = (
     const token = authHeader.split(" ")[1];
     const payload = verifyAccessToken(token) as any;
 
-    // ✅ Must always have user
     if (!payload.userId) {
       throw new AppError("Invalid token", 401);
     }
 
-    // ✅ Ensure workspace exists (VERY IMPORTANT)
+    // Require a real workspace token — no hardcoded fallback
+    if (!payload.workspaceId) {
+      throw new AppError(
+        "Workspace token required. Please switch workspace.",
+        403,
+      );
+    }
+
     req.auth = {
       userId: payload.userId,
       email: payload.email,
-
-      workspaceId: payload.workspaceId || "69bbda94279303e01c8201fb", // 🔥 fallback (TEMP SAFE)
-
+      workspaceId: payload.workspaceId,
       plan: payload.plan || "FREE",
       role: payload.role || "OWNER",
     } as AuthPayload;
