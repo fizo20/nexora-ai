@@ -28,34 +28,37 @@ const navItems = [
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
-interface SidebarProps {
-  open?: boolean;
+// ── Declared OUTSIDE Sidebar so React never recreates it on render ──
+interface SidebarInnerProps {
+  pathname: string;
   onClose?: () => void;
+  isMobile?: boolean;
 }
 
-export default function Sidebar({ open, onClose }: SidebarProps) {
-  const pathname = usePathname();
-
+function SidebarInner({ pathname, onClose, isMobile }: SidebarInnerProps) {
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(href);
   };
 
-  const sidebarContent = (
-    <aside className="w-60 h-full border-r bg-background flex flex-col">
-      {/* Logo + close button (mobile only) */}
-      <div className="flex items-center justify-between px-5 py-[18px] border-b">
+  return (
+    <>
+      {/* Logo row */}
+      <div className="flex items-center justify-between px-5 py-[18px] border-b border-gray-200 dark:border-gray-800 shrink-0">
         <Link
           href="/"
           onClick={onClose}
-          className="text-[15px] font-semibold tracking-tight text-foreground hover:opacity-80 transition-opacity"
+          className="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-gray-100 hover:opacity-80 transition-opacity"
         >
-          Nexora <span className="text-primary">AI</span>
+          Nexora{" "}
+          <span className="text-violet-600 dark:text-violet-400">AI</span>
         </Link>
-        {onClose && (
+
+        {/* Close button — mobile only */}
+        {isMobile && onClose && (
           <button
             onClick={onClose}
-            className="md:hidden p-1 rounded-md text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+            className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
             aria-label="Close menu"
           >
             <X size={16} />
@@ -74,53 +77,71 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
               key={item.name}
               href={item.href}
               onClick={onClose}
-              className={`flex items-center gap-2.5 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors ${
+              className={`flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
                 active
-                  ? "bg-accent text-foreground"
-                  : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
+                  ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
               }`}
             >
-              <Icon size={15} className={active ? "text-primary" : ""} />
+              <Icon
+                size={15}
+                className={
+                  active
+                    ? "text-violet-600 dark:text-violet-400"
+                    : "text-gray-500 dark:text-gray-500"
+                }
+              />
               {item.name}
             </Link>
           );
         })}
       </nav>
 
-      {/* Bottom */}
-      <div className="px-2 pb-3 pt-2 border-t">
+      {/* Bottom link */}
+      <div className="px-2 pb-3 pt-2 border-t border-gray-200 dark:border-gray-800 shrink-0">
         <Link
           href="/"
           onClick={onClose}
-          className="flex items-center gap-2.5 px-3 py-[7px] rounded-md text-[13px] text-muted-foreground hover:bg-accent/60 hover:text-foreground transition-colors"
+          className="flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
         >
-          <Home size={15} />
+          <Home size={15} className="text-gray-500 dark:text-gray-500" />
           Homepage
         </Link>
       </div>
-    </aside>
+    </>
   );
+}
+
+// ── Main export ──────────────────────────────────────────────────────
+interface SidebarProps {
+  open?: boolean;
+  onClose?: () => void;
+}
+
+export default function Sidebar({ open, onClose }: SidebarProps) {
+  const pathname = usePathname();
 
   return (
     <>
-      {/* Desktop sidebar — always visible */}
-      <div className="hidden md:flex h-screen sticky top-0 shrink-0">
-        {sidebarContent}
-      </div>
+      {/* Desktop sidebar — always visible, sticky */}
+      <aside className="hidden md:flex flex-col w-60 h-screen sticky top-0 shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-[#15171e]">
+        <SidebarInner pathname={pathname} />
+      </aside>
 
-      {/* Mobile sidebar — overlay drawer */}
+      {/* Mobile sidebar — overlay drawer with solid opaque background */}
       {open && (
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40 bg-black/50 md:hidden"
+            className="fixed inset-0 z-40 bg-black/60 md:hidden"
             onClick={onClose}
             aria-hidden="true"
           />
+
           {/* Drawer */}
-          <div className="fixed inset-y-0 left-0 z-50 h-full md:hidden">
-            {sidebarContent}
-          </div>
+          <aside className="fixed inset-y-0 left-0 z-50 flex flex-col w-72 h-full md:hidden bg-white dark:bg-[#15171e] border-r border-gray-200 dark:border-gray-800 shadow-2xl">
+            <SidebarInner pathname={pathname} onClose={onClose} isMobile />
+          </aside>
         </>
       )}
     </>

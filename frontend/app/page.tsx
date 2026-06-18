@@ -180,7 +180,7 @@ const PLANS = [
   },
   {
     name: "Pro",
-    price: "$29",
+    price: "$5",
     period: "per seat / month",
     description: "For growing teams that want full autonomous AI capability.",
     features: [
