@@ -28,7 +28,17 @@ const navItems = [
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
-// ── Declared OUTSIDE Sidebar so React never recreates it on render ──
+/*
+ * Dark mode sidebar palette:
+ *   bg:           #1c1f2e  — cool navy-dark, clearly distinct from page (#15171e)
+ *   border:       #2a2d3e  — subtle separator, just visible
+ *   nav hover:    #252840  — slightly lighter navy on hover
+ *   nav active:   #2e3252  — richer navy-violet for active item
+ *   active icon:  violet-400 — matches primary accent
+ *   text active:  #e8eaf6  — near-white with a cool tint
+ *   text default: #8b8fa8  — muted blue-grey, readable not harsh
+ */
+
 interface SidebarInnerProps {
   pathname: string;
   onClose?: () => void;
@@ -44,22 +54,35 @@ function SidebarInner({ pathname, onClose, isMobile }: SidebarInnerProps) {
   return (
     <>
       {/* Logo row */}
-      <div className="flex items-center justify-between px-5 py-[18px] border-b border-gray-200 dark:border-gray-800 shrink-0">
+      <div
+        className="
+          flex items-center justify-between px-5 shrink-0
+          h-[52px]
+          border-b border-gray-200 dark:border-[#2a2d3e]
+        "
+      >
         <Link
           href="/"
           onClick={onClose}
-          className="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-gray-100 hover:opacity-80 transition-opacity"
+          className="
+            text-[15px] font-semibold tracking-tight
+            text-gray-900 dark:text-[#e8eaf6]
+            hover:opacity-80 transition-opacity
+          "
         >
           Nexora{" "}
           <span className="text-violet-600 dark:text-violet-400">AI</span>
         </Link>
 
-        {/* Close button — mobile only */}
         {isMobile && onClose && (
           <button
             onClick={onClose}
-            className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
             aria-label="Close menu"
+            className="
+              p-1.5 rounded-md transition-colors
+              text-gray-500 hover:bg-gray-100 hover:text-gray-900
+              dark:text-[#8b8fa8] dark:hover:bg-[#252840] dark:hover:text-[#e8eaf6]
+            "
           >
             <X size={16} />
           </button>
@@ -67,7 +90,7 @@ function SidebarInner({ pathname, onClose, isMobile }: SidebarInnerProps) {
       </div>
 
       {/* Nav links */}
-      <nav className="flex flex-col gap-px px-2 pt-3 flex-1 overflow-y-auto">
+      <nav className="flex flex-col gap-0.5 px-2 pt-3 flex-1 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
@@ -77,18 +100,22 @@ function SidebarInner({ pathname, onClose, isMobile }: SidebarInnerProps) {
               key={item.name}
               href={item.href}
               onClick={onClose}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
-                active
-                  ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
-              }`}
+              className={`
+                flex items-center gap-2.5 px-3 py-2 rounded-md
+                text-[13px] font-medium transition-colors
+                ${
+                  active
+                    ? "bg-gray-100 text-gray-900 dark:bg-[#2e3252] dark:text-[#e8eaf6]"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-[#8b8fa8] dark:hover:bg-[#252840] dark:hover:text-[#e8eaf6]"
+                }
+              `}
             >
               <Icon
                 size={15}
                 className={
                   active
                     ? "text-violet-600 dark:text-violet-400"
-                    : "text-gray-500 dark:text-gray-500"
+                    : "text-gray-400 dark:text-[#6b6f85]"
                 }
               />
               {item.name}
@@ -97,14 +124,19 @@ function SidebarInner({ pathname, onClose, isMobile }: SidebarInnerProps) {
         })}
       </nav>
 
-      {/* Bottom link */}
-      <div className="px-2 pb-3 pt-2 border-t border-gray-200 dark:border-gray-800 shrink-0">
+      {/* Bottom — Homepage link */}
+      <div className="px-2 pb-3 pt-2 border-t border-gray-200 dark:border-[#2a2d3e] shrink-0">
         <Link
           href="/"
           onClick={onClose}
-          className="flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+          className="
+            flex items-center gap-2.5 px-3 py-2 rounded-md
+            text-[13px] transition-colors
+            text-gray-500 hover:bg-gray-100 hover:text-gray-900
+            dark:text-[#8b8fa8] dark:hover:bg-[#252840] dark:hover:text-[#e8eaf6]
+          "
         >
-          <Home size={15} className="text-gray-500 dark:text-gray-500" />
+          <Home size={15} className="text-gray-400 dark:text-[#6b6f85]" />
           Homepage
         </Link>
       </div>
@@ -112,7 +144,6 @@ function SidebarInner({ pathname, onClose, isMobile }: SidebarInnerProps) {
   );
 }
 
-// ── Main export ──────────────────────────────────────────────────────
 interface SidebarProps {
   open?: boolean;
   onClose?: () => void;
@@ -123,12 +154,19 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Desktop sidebar — always visible, sticky */}
-      <aside className="hidden md:flex flex-col w-60 h-screen sticky top-0 shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-[#15171e]">
+      {/* ── Desktop sidebar ── */}
+      <aside
+        className="
+          hidden md:flex flex-col
+          w-60 h-screen sticky top-0 shrink-0
+          bg-white dark:bg-[#1c1f2e]
+          border-r border-gray-200 dark:border-[#2a2d3e]
+        "
+      >
         <SidebarInner pathname={pathname} />
       </aside>
 
-      {/* Mobile sidebar — overlay drawer with solid opaque background */}
+      {/* ── Mobile drawer ── */}
       {open && (
         <>
           {/* Backdrop */}
@@ -139,7 +177,15 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           />
 
           {/* Drawer */}
-          <aside className="fixed inset-y-0 left-0 z-50 flex flex-col w-72 h-full md:hidden bg-white dark:bg-[#15171e] border-r border-gray-200 dark:border-gray-800 shadow-2xl">
+          <aside
+            className="
+              fixed inset-y-0 left-0 z-50
+              flex flex-col w-72 h-full
+              md:hidden shadow-2xl
+              bg-white dark:bg-[#1c1f2e]
+              border-r border-gray-200 dark:border-[#2a2d3e]
+            "
+          >
             <SidebarInner pathname={pathname} onClose={onClose} isMobile />
           </aside>
         </>
