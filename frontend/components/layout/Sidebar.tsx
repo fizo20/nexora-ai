@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Bot,
@@ -29,14 +30,13 @@ const navItems = [
 ];
 
 /*
- * Dark mode sidebar palette:
- *   bg:           #1c1f2e  — cool navy-dark, clearly distinct from page (#15171e)
- *   border:       #2a2d3e  — subtle separator, just visible
- *   nav hover:    #252840  — slightly lighter navy on hover
- *   nav active:   #2e3252  — richer navy-violet for active item
- *   active icon:  violet-400 — matches primary accent
- *   text active:  #e8eaf6  — near-white with a cool tint
- *   text default: #8b8fa8  — muted blue-grey, readable not harsh
+ * Sidebar uses --sidebar-bg / --sidebar-border / --sidebar-hover /
+ * --sidebar-active tokens defined in globals.css so it is always
+ * visually distinct from the content area (--background) in both
+ * light and dark mode, matching ChatGPT's sidebar treatment:
+ *
+ *   light: sidebar #f7f7f7  vs  content #ffffff
+ *   dark:  sidebar #171717  vs  content #212121
  */
 
 interface SidebarInnerProps {
@@ -54,22 +54,15 @@ function SidebarInner({ pathname, onClose, isMobile }: SidebarInnerProps) {
   return (
     <>
       {/* Logo row */}
-      <div
-        className="
-          flex items-center justify-between px-5 shrink-0
-          h-[52px]
-          border-b border-gray-200 dark:border-[#2a2d3e]
-        "
-      >
+      <div className="flex items-center justify-between px-4 shrink-0 h-[52px] border-b border-sidebar">
         <Link
           href="/"
           onClick={onClose}
-          className="
-            text-[15px] font-semibold tracking-tight
-            text-gray-900 dark:text-[#e8eaf6]
-            hover:opacity-80 transition-opacity
-          "
+          className="flex items-center gap-2 text-[14px] font-semibold tracking-tight text-foreground hover:opacity-75 transition-opacity"
         >
+          <div className="h-5 w-5 rounded-md flex items-center justify-center text-[10px] font-black text-white bg-violet-600 dark:bg-violet-500 shrink-0">
+            N
+          </div>
           Nexora{" "}
           <span className="text-violet-600 dark:text-violet-400">AI</span>
         </Link>
@@ -78,11 +71,7 @@ function SidebarInner({ pathname, onClose, isMobile }: SidebarInnerProps) {
           <button
             onClick={onClose}
             aria-label="Close menu"
-            className="
-              p-1.5 rounded-md transition-colors
-              text-gray-500 hover:bg-gray-100 hover:text-gray-900
-              dark:text-[#8b8fa8] dark:hover:bg-[#252840] dark:hover:text-[#e8eaf6]
-            "
+            className="p-1.5 rounded-md transition-colors text-[hsl(var(--sidebar-icon))] hover:bg-[hsl(var(--sidebar-hover))] hover:text-foreground"
           >
             <X size={16} />
           </button>
@@ -90,7 +79,7 @@ function SidebarInner({ pathname, onClose, isMobile }: SidebarInnerProps) {
       </div>
 
       {/* Nav links */}
-      <nav className="flex flex-col gap-0.5 px-2 pt-3 flex-1 overflow-y-auto">
+      <nav className="flex flex-col gap-px px-2 pt-3 flex-1 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
@@ -100,23 +89,30 @@ function SidebarInner({ pathname, onClose, isMobile }: SidebarInnerProps) {
               key={item.name}
               href={item.href}
               onClick={onClose}
-              className={`
-                flex items-center gap-2.5 px-3 py-2 rounded-md
-                text-[13px] font-medium transition-colors
-                ${
-                  active
-                    ? "bg-gray-100 text-gray-900 dark:bg-[#2e3252] dark:text-[#e8eaf6]"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-[#8b8fa8] dark:hover:bg-[#252840] dark:hover:text-[#e8eaf6]"
-                }
-              `}
+              style={
+                active
+                  ? {
+                      backgroundColor: "hsl(var(--sidebar-active))",
+                      color: "hsl(var(--sidebar-text-active))",
+                    }
+                  : undefined
+              }
+              className={cn(
+                "flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-normal transition-colors",
+                !active &&
+                  "hover:bg-[hsl(var(--sidebar-hover))] hover:text-[hsl(var(--sidebar-text-active))]",
+              )}
+              {...(!active && {
+                style: { color: "hsl(var(--sidebar-text))" },
+              })}
             >
               <Icon
-                size={15}
-                className={
-                  active
-                    ? "text-violet-600 dark:text-violet-400"
-                    : "text-gray-400 dark:text-[#6b6f85]"
-                }
+                size={16}
+                strokeWidth={1.75}
+                style={{
+                  color: active ? undefined : "hsl(var(--sidebar-icon))",
+                }}
+                className={active ? "text-violet-600 dark:text-violet-400" : ""}
               />
               {item.name}
             </Link>
@@ -125,18 +121,18 @@ function SidebarInner({ pathname, onClose, isMobile }: SidebarInnerProps) {
       </nav>
 
       {/* Bottom — Homepage link */}
-      <div className="px-2 pb-3 pt-2 border-t border-gray-200 dark:border-[#2a2d3e] shrink-0">
+      <div className="px-2 pb-3 pt-2 border-t border-sidebar shrink-0">
         <Link
           href="/"
           onClick={onClose}
-          className="
-            flex items-center gap-2.5 px-3 py-2 rounded-md
-            text-[13px] transition-colors
-            text-gray-500 hover:bg-gray-100 hover:text-gray-900
-            dark:text-[#8b8fa8] dark:hover:bg-[#252840] dark:hover:text-[#e8eaf6]
-          "
+          style={{ color: "hsl(var(--sidebar-text))" }}
+          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] transition-colors hover:bg-[hsl(var(--sidebar-hover))] hover:text-[hsl(var(--sidebar-text-active))]"
         >
-          <Home size={15} className="text-gray-400 dark:text-[#6b6f85]" />
+          <Home
+            size={16}
+            strokeWidth={1.75}
+            style={{ color: "hsl(var(--sidebar-icon))" }}
+          />
           Homepage
         </Link>
       </div>
@@ -155,37 +151,20 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   return (
     <>
       {/* ── Desktop sidebar ── */}
-      <aside
-        className="
-          hidden md:flex flex-col
-          w-60 h-screen sticky top-0 shrink-0
-          bg-white dark:bg-[#1c1f2e]
-          border-r border-gray-200 dark:border-[#2a2d3e]
-        "
-      >
+      <aside className="hidden md:flex flex-col w-60 h-screen sticky top-0 shrink-0 bg-sidebar border-sidebar border-r">
         <SidebarInner pathname={pathname} />
       </aside>
 
       {/* ── Mobile drawer ── */}
       {open && (
         <>
-          {/* Backdrop */}
           <div
             className="fixed inset-0 z-40 bg-black/60 md:hidden"
             onClick={onClose}
             aria-hidden="true"
           />
 
-          {/* Drawer */}
-          <aside
-            className="
-              fixed inset-y-0 left-0 z-50
-              flex flex-col w-72 h-full
-              md:hidden shadow-2xl
-              bg-white dark:bg-[#1c1f2e]
-              border-r border-gray-200 dark:border-[#2a2d3e]
-            "
-          >
+          <aside className="fixed inset-y-0 left-0 z-50 flex flex-col w-72 h-full md:hidden shadow-2xl bg-sidebar border-sidebar border-r">
             <SidebarInner pathname={pathname} onClose={onClose} isMobile />
           </aside>
         </>

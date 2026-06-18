@@ -52,25 +52,3 @@ export const logAIAudit = async (params: {
     console.error("AI Audit Logging Failed:", err);
   }
 };
-
-export const logAICall = async ({
-  workspaceId,
-  projectId,
-  userId,
-  inputSize,
-  outputSize,
-}: {
-  workspaceId: string;
-  projectId?: string;
-  userId: string;
-  inputSize: number;
-  outputSize: number;
-}) => {
-  await AIAudit.create({
-    workspaceId: new Types.ObjectId(workspaceId),
-    projectId: projectId ? new Types.ObjectId(projectId) : undefined,
-    userId: new Types.ObjectId(userId),
-    inputSize,
-    outputSize,
-  });
-};

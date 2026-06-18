@@ -13,7 +13,7 @@ import {
   getConversationMessages,
 } from "../services/ai-chat.service";
 import { createConversation } from "../services/ai-conversation.service";
-import { logAICall } from "../services/ai-audit.service";
+import { logAIAudit } from "../services/ai-audit.service";
 
 import { emitAICompleted } from "../socket/ai.gateway";
 
@@ -174,12 +174,13 @@ export async function handleAIAssistant(req: Request, res: Response) {
 
     const cleanReply = mainResponse?.trim() || "Done";
 
-    await logAICall({
+    await logAIAudit({
       workspaceId,
-      projectId,
       userId: auth.userId,
-      inputSize: goal.length,
-      outputSize: cleanReply.length,
+      action: "CHAT",
+      endpoint: "/api/ai/assistant",
+      prompt: goal,
+      output: cleanReply,
     });
 
     // Stream assistant reply
@@ -216,20 +217,35 @@ export async function handleAIAssistant(req: Request, res: Response) {
     });
 
     res.end();
-  } catch (error) {
-    console.error("AI Assistant Error:", error);
+  } catch (error: any) {
+    // 🔍 Log the full error object (stack included) — this is the
+    // single most important diagnostic line in this controller.
+    // Previously the frontend only ever saw a generic message with
+    // zero trace of the actual failure in the server console.
+    console.error("❌ AI Assistant Error (full):", error);
+    console.error("❌ AI Assistant Error message:", error?.message);
+    console.error("❌ AI Assistant Error stack:", error?.stack);
 
     if (!res.headersSent) {
       return res.status(500).json({
         error: "Internal error",
+        // Only leak the raw message outside production so local/staging
+        // debugging is fast, without exposing internals to real users.
+        ...(process.env.NODE_ENV !== "production" && {
+          detail: error?.message,
+        }),
       });
     }
+
+    const userFacingMessage =
+      process.env.NODE_ENV !== "production"
+        ? `I ran into a problem completing that request: ${error?.message || "Unknown error"}`
+        : "I ran into a problem completing that request. Please try again.";
 
     res.write(
       `data: ${JSON.stringify({
         type: "error",
-        message:
-          "I ran into a problem completing that request. Please try again.",
+        message: userFacingMessage,
       })}\n\n`,
     );
 

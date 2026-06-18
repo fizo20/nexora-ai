@@ -20,20 +20,12 @@ export default function BillingPage() {
   const fetchBilling = async () => {
     try {
       const res = await apiClient("/api/billing/usage");
-      const usageArray = res?.usage || [];
-      const totalUsage = usageArray.reduce(
-        (sum: number, item: { total: number }) => sum + item.total,
-        0,
-      );
-      const workspaceRes = await apiClient("/api/workspaces");
-      const currentPlan =
-        workspaceRes?.data?.[0]?.plan || workspaceRes?.data?.plan || "FREE";
-      const PLAN_LIMITS: Record<string, number> = {
-        FREE: 50,
-        PRO: 500,
-        ENTERPRISE: Infinity,
-      };
-      const limit = PLAN_LIMITS[currentPlan] ?? 50;
+      // /api/billing/usage already returns the aggregated totals — usage is
+      // a number (usage.totalCalls on the backend), not an array of records,
+      // so it should be used directly rather than reduced.
+      const totalUsage = typeof res?.usage === "number" ? res.usage : 0;
+      const limit = typeof res?.limit === "number" ? res.limit : 50;
+      const currentPlan = res?.plan || "FREE";
       setUsage({
         totalUsage,
         limit,

@@ -5,6 +5,7 @@
     "rootDir": "./src",
     "outDir": "./dist",
 
+    // eslint-disable-next-line
     "strict": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

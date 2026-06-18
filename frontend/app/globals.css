@@ -1,101 +1,134 @@
 /* frontend/app/globals.css */
 @import "tailwindcss";
 
-/* ------------------------------- */
-/* NEXORA DESIGN SYSTEM            */
-/* Inspired by: Linear, Notion,    */
-/* ChatGPT — clean, structured,    */
-/* with intention in every token   */
-/* ------------------------------- */
+/* ============================================================
+   NEXORA DESIGN SYSTEM
+   Light mode: clean white content + slightly tinted sidebar
+   Dark mode:  ChatGPT-matched neutrals — sidebar #171717,
+               content #212121 (lighter than sidebar, like ChatGPT)
+   ============================================================ */
 
 :root {
-  /* Backgrounds */
-  --background: 0 0% 99%;          /* near-white, not pure white */
-  --surface: 0 0% 97%;             /* subtle page-level surface */
-  --card: 0 0% 100%;               /* cards pop slightly */
+  /* ── Core backgrounds ─────────────────────────────────────
+     Sidebar gets --sidebar-bg (slightly off-white / grey).
+     Content area gets --background (pure white).
+     Cards sit on top of --background.                       */
+  --background: 0 0% 100%; /* #ffffff  — main content area   */
+  --sidebar-bg: 0 0% 97%; /* #f7f7f7  — sidebar, visibly    */
+  /*            cooler than content  */
+  --surface: 0 0% 97%; /* alias for sidebar tint          */
+  --card: 0 0% 100%; /* #ffffff  — cards on bg          */
   --card-foreground: 220 15% 14%;
 
-  /* Foregrounds */
-  --foreground: 220 15% 14%;       /* deep ink, not harsh black */
-  --muted-foreground: 220 9% 48%;  /* secondary text */
+  /* ── Foregrounds ──────────────────────────────────────────*/
+  --foreground: 220 15% 12%; /* #1a1d23 — deep ink              */
+  --muted-foreground: 220 9% 46%; /* #6e7280 — secondary text        */
 
-  /* Primary — Nexora violet */
+  /* ── Brand accent — Nexora violet ────────────────────────*/
   --primary: 252 82% 60%;
   --primary-foreground: 0 0% 100%;
 
-  /* Interactive states */
+  /* ── Interactive states ───────────────────────────────────*/
   --secondary: 220 14% 94%;
   --secondary-foreground: 220 15% 14%;
   --muted: 220 14% 94%;
-  --accent: 220 14% 92%;           /* hover tint — very subtle */
+  --accent: 220 13% 92%; /* hover tint on content pages     */
   --accent-foreground: 220 15% 14%;
 
-  /* Semantic */
+  /* ── Sidebar-specific interactive states ─────────────────*/
+  --sidebar-hover: 220 13% 92%; /* #e9eaed  — row hover            */
+  --sidebar-active: 220 13% 89%; /* #e3e5ea  — active row           */
+  --sidebar-text: 220 9% 40%; /* #5f6575  — default nav text     */
+  --sidebar-text-active: 220 15% 12%; /* same as foreground               */
+  --sidebar-icon: 220 9% 56%; /* #838899  — icon default         */
+  --sidebar-border: 220 13% 90%; /* #e3e5ea  — hairline             */
+
+  /* ── Semantic ─────────────────────────────────────────────*/
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
 
-  /* Borders — light, Linear-style hairlines */
-  --border: 220 13% 89%;           /* #e1e4ea — barely visible */
-  --border-strong: 220 13% 82%;    /* slightly stronger when needed */
-  --input: 220 13% 89%;
+  /* ── Borders ─────────────────────────────────────────────*/
+  --border: 220 13% 90%; /* #e3e5ea                         */
+  --border-strong: 220 13% 82%;
+  --input: 220 13% 90%;
   --ring: 252 82% 60%;
 
-  /* Radius */
+  /* ── Radius ───────────────────────────────────────────────*/
   --radius: 0.5rem;
 
-  /* Status */
+  /* ── Status ───────────────────────────────────────────────*/
   --success: 142 71% 45%;
   --warning: 38 92% 50%;
   --info: 217 91% 60%;
 }
 
-/* ------------------------------- */
-/* DARK MODE — Linear/Notion dark  */
-/* ------------------------------- */
+/* ============================================================
+   DARK MODE — matched to ChatGPT's real published palette
+   Sidebar:        #171717  (darkest chrome)
+   Content area:   #212121  (slightly lighter — ChatGPT inversion)
+   Cards:          #2a2a2a  (sit above content bg)
+   Nav hover:      #2a2a2a
+   Nav active:     #303030
+   Text default:   #b4b4b4
+   Text active:    #ececec
+   Icon:           #8e8ea0
+   Border:         #2a2a2a
+   ============================================================ */
 
 .dark {
-  /* Backgrounds — layered depth like Linear */
-  --background: 224 15% 10%;       /* #15171e — deep navy-black */
-  --surface: 224 15% 12%;
-  --card: 224 14% 13%;             /* #1b1e27 — card sits on bg */
-  --card-foreground: 220 20% 92%;
+  /* ── Core backgrounds ─────────────────────────────────────*/
+  --background: 0 0% 13%; /* #212121 — content (lighter)     */
+  --sidebar-bg: 0 0% 9%; /* #171717 — sidebar (darker)      */
+  --surface: 0 0% 9%;
+  --card: 0 0% 17%; /* #2a2a2a                         */
+  --card-foreground: 0 0% 92%;
 
-  /* Foregrounds */
-  --foreground: 220 20% 92%;       /* off-white, not blinding */
-  --muted-foreground: 220 12% 56%; /* muted text — readable */
+  /* ── Foregrounds ──────────────────────────────────────────*/
+  --foreground: 0 0% 92%; /* #ececec                         */
+  --muted-foreground: 0 0% 57%; /* #919191                         */
 
-  /* Primary stays vibrant */
+  /* ── Brand accent ─────────────────────────────────────────*/
   --primary: 252 82% 65%;
   --primary-foreground: 0 0% 100%;
 
-  /* Interactive states */
-  --secondary: 224 14% 18%;
-  --secondary-foreground: 220 20% 92%;
-  --muted: 224 14% 16%;
-  --accent: 224 14% 18%;           /* hover tint */
-  --accent-foreground: 220 20% 92%;
+  /* ── Interactive states (content area) ───────────────────*/
+  --secondary: 0 0% 18%;
+  --secondary-foreground: 0 0% 92%;
+  --muted: 0 0% 17%;
+  --accent: 0 0% 18%;
+  --accent-foreground: 0 0% 92%;
 
-  /* Semantic */
+  /* ── Sidebar-specific interactive states ─────────────────*/
+  --sidebar-hover: 0 0% 17%; /* #2a2a2a — row hover             */
+  --sidebar-active: 0 0% 19%; /* #303030 — active row            */
+  --sidebar-text: 0 0% 71%; /* #b4b4b4 — default nav text      */
+  --sidebar-text-active: 0 0% 92%; /* #ececec — active nav text       */
+  --sidebar-icon: 0 0% 56%; /* #8e8e8e — icon default          */
+  --sidebar-border: 0 0% 17%; /* #2a2a2a — hairline              */
+
+  /* ── Semantic ─────────────────────────────────────────────*/
   --destructive: 0 65% 55%;
   --destructive-foreground: 0 0% 100%;
 
-  /* Borders — subtle in dark, not invisible */
-  --border: 224 14% 20%;           /* #252833 — crisp Linear-style */
-  --border-strong: 224 14% 26%;
-  --input: 224 14% 20%;
+  /* ── Borders ─────────────────────────────────────────────*/
+  --border: 0 0% 17%; /* #2a2a2a                         */
+  --border-strong: 0 0% 24%;
+  --input: 0 0% 17%;
   --ring: 252 82% 65%;
 
-  /* Status */
+  /* ── Status ───────────────────────────────────────────────*/
   --success: 142 61% 42%;
   --warning: 38 85% 50%;
   --info: 217 85% 62%;
 }
 
-/* ------------------------------- */
-/* BASE STYLES                     */
-/* ------------------------------- */
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   border-color: hsl(var(--border));
 }
 
@@ -106,7 +139,24 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar — Notion/Linear style */
+/* ============================================================
+   SIDEBAR UTILITY CLASS
+   Apply bg-sidebar to <aside> elements instead of bg-surface
+   so the colour is always distinct from --background.
+   ============================================================ */
+
+.bg-sidebar {
+  background-color: hsl(var(--sidebar-bg));
+}
+
+.border-sidebar {
+  border-color: hsl(var(--sidebar-border));
+}
+
+/* ============================================================
+   SCROLLBAR — Notion / Linear style
+   ============================================================ */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -122,28 +172,47 @@ body {
   background: hsl(var(--muted-foreground) / 0.4);
 }
 
-/* Selection */
+/* ============================================================
+   SELECTION
+   ============================================================ */
+
 ::selection {
   background: hsl(var(--primary) / 0.18);
   color: hsl(var(--foreground));
 }
 
-/* ------------------------------- */
-/* UTILITY EXTENSIONS              */
-/* ------------------------------- */
+/* ============================================================
+   SMOOTH SCROLL
+   ============================================================ */
 
-/* Semantic color utilities using CSS vars */
-.text-success { color: hsl(var(--success)); }
-.text-warning { color: hsl(var(--warning)); }
-.text-info { color: hsl(var(--info)); }
-.bg-success { background-color: hsl(var(--success)); }
-.bg-warning { background-color: hsl(var(--warning)); }
-.bg-success\/10 { background-color: hsl(var(--success) / 0.1); }
-.bg-warning\/10 { background-color: hsl(var(--warning) / 0.1); }
-
-/* Smooth page transitions */
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
   }
+}
+
+/* ============================================================
+   SEMANTIC COLOR UTILITIES
+   ============================================================ */
+
+.text-success {
+  color: hsl(var(--success));
+}
+.text-warning {
+  color: hsl(var(--warning));
+}
+.text-info {
+  color: hsl(var(--info));
+}
+.bg-success {
+  background-color: hsl(var(--success));
+}
+.bg-warning {
+  background-color: hsl(var(--warning));
+}
+.bg-success\/10 {
+  background-color: hsl(var(--success) / 0.1);
+}
+.bg-warning\/10 {
+  background-color: hsl(var(--warning) / 0.1);
 }

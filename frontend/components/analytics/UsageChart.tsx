@@ -53,8 +53,9 @@ export default function UsageChart({ range }: Props) {
 
   return (
     <AnalyticsCard title="AI Usage Trend">
-      <div style={{ width: "100%", height: 250 }}>
-        <ResponsiveContainer>
+      {/* minHeight guarantees ResponsiveContainer never measures 0 on first paint */}
+      <div style={{ width: "100%", minHeight: 250, height: 250 }}>
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
 
