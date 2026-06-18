@@ -2,7 +2,6 @@
 "use client";
 
 import { useState } from "react";
-
 import UsageChart from "@/components/analytics/UsageChart";
 import TaskHealthChart from "@/components/analytics/TaskHealthChart";
 import UpgradeInsights from "@/components/analytics/UpgradeInsights";
@@ -13,78 +12,69 @@ import EnterpriseStats from "@/components/analytics/EnterpriseStats";
 import UsageBreakdown from "@/components/analytics/UsageBreakdown";
 import SeatAnalytics from "@/components/analytics/SeatAnalytics";
 
-// Removed: AIActivityTimeline — moved to its own page at /dashboard/ai-activity
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export default function AnalyticsPage() {
   const [range, setRange] = useState<RangeType>("7d");
 
   const handleExport = () => {
-    window.open(
-      `http://localhost:4000/api/analytics/export?range=${range}`,
-      "_blank",
-    );
+    window.open(`${API_URL}/api/analytics/export?range=${range}`, "_blank");
   };
 
   return (
-    <div className="space-y-8">
-      {/* HEADER */}
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Enterprise Analytics</h1>
-
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-xl font-semibold text-foreground">
+            Enterprise Analytics
+          </h1>
+          <p className="text-[13px] text-muted-foreground mt-0.5">
             Workspace intelligence, AI telemetry, and operational insights
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {["7d", "30d", "90d"].map((r) => (
+        <div className="flex flex-wrap items-center gap-2">
+          {(["7d", "30d", "90d"] as RangeType[]).map((r) => (
             <button
               key={r}
-              onClick={() => setRange(r as RangeType)}
-              className={`rounded-lg px-4 py-2 text-sm transition ${
+              onClick={() => setRange(r)}
+              className={`rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors ${
                 range === r
                   ? "bg-primary text-primary-foreground"
-                  : "border bg-background hover:bg-muted"
+                  : "border bg-background text-foreground hover:bg-muted"
               }`}
             >
               {r}
             </button>
           ))}
-
           <button
             onClick={handleExport}
-            className="rounded-lg bg-green-600 px-4 py-2 text-sm text-white"
+            className="rounded-lg border bg-background px-3 py-1.5 text-[13px] font-medium text-foreground hover:bg-muted transition-colors"
           >
             Export CSV
           </button>
         </div>
       </div>
 
-      {/* METRICS */}
+      {/* Metrics */}
       <WorkspaceMetricsGrid />
-
       <AIAnalyticsOverview />
 
-      {/* CHARTS */}
-      <>
-        <EnterpriseStats />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="space-y-6 xl:col-span-2">
-            <UsageChart range={range} />
+      {/* Charts */}
+      <EnterpriseStats />
 
-            <TaskHealthChart />
-          </div>
-
-          <div className="space-y-6">
-            <UpgradeInsights />
-
-            <UsageBreakdown />
-
-            <SeatAnalytics />
-          </div>
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <div className="space-y-5 lg:col-span-2">
+          <UsageChart range={range} />
+          <TaskHealthChart />
         </div>
-      </>
+        <div className="space-y-5">
+          <UpgradeInsights />
+          <UsageBreakdown />
+          <SeatAnalytics />
+        </div>
+      </div>
     </div>
   );
 }

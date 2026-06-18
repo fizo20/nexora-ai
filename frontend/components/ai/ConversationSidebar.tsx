@@ -52,9 +52,9 @@ export default function ConversationSidebar({
   };
 
   return (
-    <div className="w-60 border-r bg-background flex flex-col shrink-0">
+    <div className="w-64 h-full border-r bg-background flex flex-col">
       {/* Header */}
-      <div className="p-3 border-b">
+      <div className="p-3 border-b shrink-0">
         <button
           onClick={onNewChat}
           className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-md text-[13px] font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
@@ -105,6 +105,8 @@ export default function ConversationSidebar({
 
             <div className="hidden group-hover:flex items-center gap-1 ml-2 shrink-0">
               <button
+                type="button"
+                title="Rename conversation"
                 onClick={(e) => {
                   e.stopPropagation();
                   setEditingId(conv._id);
@@ -115,6 +117,8 @@ export default function ConversationSidebar({
                 <PenLine size={12} />
               </button>
               <button
+                type="button"
+                title="Delete conversation"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDelete(conv._id);

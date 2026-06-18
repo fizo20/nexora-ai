@@ -1,10 +1,4 @@
 // frontend/app/dashboard/layout.tsx
-//
-// RealtimeProvider added here so the socket only connects when the user
-// reaches the authenticated dashboard — not on /login, /register, or any
-// other public page. This eliminates the flood of CORS-rejected socket
-// polling requests that appeared before login.
-
 "use client";
 
 import { useState } from "react";
@@ -24,6 +18,7 @@ export default function DashboardLayout({
     upgradeTo: "PRO" | "ENTERPRISE";
   };
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [upgradeData, setUpgradeData] = useState<UpgradeData | null>(null);
 
   useUpgradeListener((data) => {
@@ -33,18 +28,21 @@ export default function DashboardLayout({
   return (
     <RealtimeProvider>
       <div className="flex min-h-screen bg-background">
-        <Sidebar />
+        {/* Sidebar handles its own desktop/mobile rendering */}
+        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
+        {/* Main content */}
         <div className="flex-1 flex flex-col min-h-screen min-w-0">
-          <Topbar />
-          <main className="p-6 flex-1">{children}</main>
+          <Topbar onMenuClick={() => setSidebarOpen(true)} />
+          <main className="p-4 sm:p-6 flex-1 overflow-x-hidden">
+            {children}
+          </main>
         </div>
 
         {/* Upgrade modal */}
         {upgradeData && (
           <div className="fixed inset-0 bg-foreground/20 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-card text-card-foreground border rounded-xl w-full max-w-sm shadow-xl">
-              {/* Header */}
               <div className="flex items-start justify-between p-5 border-b">
                 <div>
                   <h2 className="text-[15px] font-semibold text-foreground">
@@ -60,15 +58,13 @@ export default function DashboardLayout({
                 </div>
                 <button
                   onClick={() => setUpgradeData(null)}
-                  aria-label="Close upgrade modal"
-                  title="Close"
+                  aria-label="Close"
                   className="p-1 rounded-md text-muted-foreground hover:bg-accent hover:text-foreground transition-colors ml-3"
                 >
                   <X size={16} />
                 </button>
               </div>
 
-              {/* Body */}
               <div className="p-5 space-y-3">
                 <div className="rounded-lg bg-muted p-4 text-[13px]">
                   <p className="font-medium text-foreground mb-2">
